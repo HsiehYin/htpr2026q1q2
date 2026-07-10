@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 上半年工作績效總結</title>
+<style>
+  :root {
+    --bg: #f5f7fa;
+    --card: #ffffff;
+    --primary: #2563eb;
+    --primary-light: #dbeafe;
+    --success: #16a34a;
+    --success-light: #dcfce7;
+    --warning: #d97706;
+    --warning-light: #fef3c7;
+    --danger: #dc2626;
+    --danger-light: #fee2e2;
+    --purple: #7c3aed;
+    --purple-light: #ede9fe;
+    --muted: #6b7280;
+    --muted-light: #f3f4f6;
+    --border: #e5e7eb;
+    --text: #111827;
+    --text-sm: #374151;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Noto Sans TC", sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+  .page-header { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: white; padding: 40px 48px 36px; }
+  .page-header h1 { font-size: 28px; font-weight: 700; letter-spacing: 0.5px; }
+  .page-header .subtitle { margin-top: 6px; opacity: 0.85; font-size: 14px; }
+  .page-header .meta { margin-top: 16px; display: flex; gap: 16px; flex-wrap: wrap; }
+  .meta-item { background: rgba(255,255,255,0.15); border-radius: 8px; padding: 8px 16px; font-size: 13px; }
+  .meta-item strong { display: block; font-size: 22px; font-weight: 700; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+
+  .summary-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 36px; }
+  .stat-card { background: var(--card); border-radius: 12px; padding: 20px; border: 1px solid var(--border); text-align: center; }
+  .stat-card .num { font-size: 36px; font-weight: 700; color: var(--primary); }
+  .stat-card .label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .stat-card.green .num { color: var(--success); }
+  .stat-card.orange .num { color: var(--warning); }
+  .stat-card.purple .num { color: var(--purple); }
+
+  .toc { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 24px; margin-bottom: 36px; }
+  .toc h2 { font-size: 13px; font-weight: 700; margin-bottom: 14px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .toc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 8px; }
+  .toc-link { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-sm); padding: 8px 12px; border-radius: 8px; font-size: 13.5px; transition: background 0.15s; }
+  .toc-link:hover { background: var(--primary-light); color: var(--primary); }
+  .toc-badge { background: var(--primary-light); color: var(--primary); border-radius: 999px; padding: 1px 9px; font-size: 11px; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+
+  .section { margin-bottom: 40px; }
+  .section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+  .section-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .section-title { font-size: 18px; font-weight: 700; }
+  .section-desc { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+  .parent-card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); margin-bottom: 16px; overflow: hidden; }
+  .parent-head { padding: 16px 20px; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .parent-info { flex: 1; min-width: 0; }
+  .parent-key { font-family: monospace; font-size: 11px; background: var(--muted-light); color: var(--muted); padding: 2px 7px; border-radius: 5px; font-weight: 600; margin-right: 8px; }
+  .parent-name { font-size: 14.5px; font-weight: 600; color: var(--text); }
+  .parent-meta { margin-top: 4px; font-size: 12px; color: var(--muted); display: flex; gap: 12px; flex-wrap: wrap; }
+  .parent-stats { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+  .progress-wrap { display: flex; align-items: center; gap: 8px; }
+  .progress-bar { width: 80px; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--success); border-radius: 3px; }
+  .progress-fill.inprog { background: var(--warning); }
+  .progress-pct { font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+  .tasks-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tasks-table th { background: var(--muted-light); color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  .tasks-table td { padding: 9px 14px; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+  .tasks-table tr:last-child td { border-bottom: none; }
+  .tasks-table tr:hover td { background: #fafbfc; }
+
+  .ticket-key { font-family: monospace; font-size: 11px; color: var(--primary); background: var(--primary-light); padding: 2px 7px; border-radius: 5px; font-weight: 600; white-space: nowrap; }
+  .ticket-key.pir { color: #b91c1c; background: #fee2e2; }
+  .ticket-key.vaor { color: #7c3aed; background: #ede9fe; }
+  .ticket-key.sar { color: #0369a1; background: #e0f2fe; }
+  .task-summary { color: var(--text-sm); line-height: 1.4; }
+
+  .type-tag { display: inline-block; font-size: 10px; padding: 1px 7px; border-radius: 999px; font-weight: 600; white-space: nowrap; }
+  .type-子任務 { background: #ede9fe; color: #6d28d9; }
+  .type-Bug { background: #fee2e2; color: #b91c1c; }
+  .type-任務 { background: #dbeafe; color: #1d4ed8; }
+  .type-漏洞 { background: #ffedd5; color: #c2410c; }
+  .type-故事 { background: #ecfdf5; color: #065f46; }
+  .type-Prod { background: #fef3c7; color: #92400e; }
+
+  .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+  .badge-done { background: var(--success-light); color: var(--success); }
+  .badge-inprogress { background: var(--warning-light); color: var(--warning); }
+  .badge-pending { background: var(--muted-light); color: var(--muted); }
+  .badge-notpursue { background: #f3f4f6; color: #9ca3af; }
+  .badge-intest { background: #dbeafe; color: #1d4ed8; }
+  .badge-indev { background: #ede9fe; color: #7c3aed; }
+  .badge-prerelease { background: #fef3c7; color: #92400e; }
+  .badge-readytest { background: #ecfdf5; color: #065f46; }
+
+  .date-cell { color: var(--muted); font-size: 12px; white-space: nowrap; }
+
+  .standalone-group { background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 16px; }
+
+  footer { text-align: center; padding: 32px; color: var(--muted); font-size: 12px; border-top: 1px solid var(--border); margin-top: 16px; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>2026 上半年工作績效總結</h1>
+  <div class="subtitle">Hytech BIT 前端工程師 · 2026/01 – 2026/06</div>
+  <div class="meta">
+    <div class="meta-item"><strong>98</strong>有效工單數</div>
+    <div class="meta-item"><strong>9</strong>業務模組</div>
+    <div class="meta-item"><strong>7+</strong>涉及品牌</div>
+    <div class="meta-item"><strong>~78%</strong>整體完成率</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="summary-bar">
+    <div class="stat-card green"><div class="num">76</div><div class="label">已完成</div></div>
+    <div class="stat-card orange"><div class="num">10</div><div class="label">進行中 / 待處理</div></div>
+    <div class="stat-card purple"><div class="num">12</div><div class="label">Not Pursue</div></div>
+    <div class="stat-card"><div class="num">4</div><div class="label">Production Issues</div></div>
+    <div class="stat-card"><div class="num">6mo</div><div class="label">涵蓋範圍</div></div>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <h2>目錄 — 業務模組</h2>
+    <div class="toc-grid">
+      <a class="toc-link" href="#s1"><span class="toc-badge">7 stories</span>SRC 2.0 出金改造（核心大項目）</a>
+      <a class="toc-link" href="#s2"><span class="toc-badge">5 stories</span>新品牌 / 監管合規接入</a>
+      <a class="toc-link" href="#s3"><span class="toc-badge">2 stories</span>黃金開戶流程 - 支付模塊</a>
+      <a class="toc-link" href="#s4"><span class="toc-badge">3 stories</span>LBT 合單延伸（PU / VJP / ST）</a>
+      <a class="toc-link" href="#s5"><span class="toc-badge">5 stories</span>出金功能優化 / 配置</a>
+      <a class="toc-link" href="#s6"><span class="toc-badge">5 stories</span>轉帳 / 入金問題修復</a>
+      <a class="toc-link" href="#s7"><span class="toc-badge">2 stories</span>Social Trading / IBT</a>
+      <a class="toc-link" href="#s8"><span class="toc-badge">12 bugs</span>VF 品牌 UI Bug 集中修復</a>
+      <a class="toc-link" href="#s9"><span class="toc-badge">9 items</span>Production Issues / 獨立線上修復</a>
+    </div>
+  </div>
+
+  <!-- ===================== SECTION 1 ===================== -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <div class="section-icon" style="background:#dbeafe;">🚀</div>
+      <div>
+        <div class="section-title">SRC 2.0 出金改造（核心大項目）</div>
+        <div class="section-desc">跨品牌出金流程全面接入 SRC 2.0 身份驗證機制，涵蓋 AU、VT、MM、ST、PU、UM、VJP 七個品牌</div>
+      </div>
+    </div>
+
+    <!-- PWR-16028 -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-16028</span><span class="parent-name">【AU Client &amp; IB 出金】【對接 SRC 2.0】</span>
+          <div class="parent-meta"><span>AU 品牌 Client Portal 及 IB 出金流程接 SRC 2.0</span><span>2 個子任務</span><span>100% 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">2/2</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-17807</span></td><td class="task-summary">[開發][FE]【AU Client &amp; IB出金】【對接SRC 2.0】</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/01/08</td></tr>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-19131</span></td><td class="task-summary">[跟測][FE]【AU Client &amp; IB出金】【對接SRC 2.0】</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/01/22</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PWR-18875 Bug集中串 -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-18875</span><span class="parent-name">SRC 2.0 出金 Bug 集中串</span>
+          <div class="parent-meta"><span>AU / IB 新流程出金 Alpha 驗收 Bug</span><span>3 個 Bug</span><span>2/3 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:67%"></div></div><span class="progress-pct">2/3</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-Bug">Bug</span></td><td><span class="ticket-key">PWR-18975</span></td><td class="task-summary">[alpha][AU][v1][BE] IB申請出金，OTP驗證通過後沒有返回成功頁，直接跳轉首頁</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/01/21</td></tr>
+          <tr><td><span class="type-tag type-Bug">Bug</span></td><td><span class="ticket-key">PWR-19236</span></td><td class="task-summary">[Alpha][AU][FCA][IB] 走新流程出金時沒有走 SRC verification 且 apply withdraw 接口報錯</td><td><span class="badge badge-notpursue">— Not Pursue</span></td><td class="date-cell">2026/01/24</td></tr>
+          <tr><td><span class="type-tag type-Bug">Bug</span></td><td><span class="ticket-key">PWR-19286</span></td><td class="task-summary">[alpha][au][v1][app] 白名單客戶新流程，APP申請出金，觸發 SRC 風險等級 2，驗證方式不符預期</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/01/26</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PWR-22114 -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-22114</span><span class="parent-name">SRC 出金問題修復</span>
+          <div class="parent-meta"><span>2 個子任務</span><span>100% 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">2/2</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-22159</span></td><td class="task-summary">[開發][AU][FE][H5] SRC 出金問題</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/03/09</td></tr>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-22755</span></td><td class="task-summary">[跟測][AU][FE][H5] SRC 出金問題</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/03/13</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PWR-23295 -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-23295</span><span class="parent-name">SRC 出金提示文案優化</span>
+          <div class="parent-meta"><span>2 個子任務</span><span>100% 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">2/2</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-23695</span></td><td class="task-summary">「開發」SRC 出金提示文案優化</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/03/25</td></tr>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-23696</span></td><td class="task-summary">「跟測」SRC 出金提示文案優化</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/03/25</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PWR-27085 -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-27085</span><span class="parent-name">[VT] 支付出金 SRC 2.0</span>
+          <div class="parent-meta"><span>VT 品牌出金流程接 SRC 2.0</span><span>3 個子任務</span><span>100% 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">3/3</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-27929</span></td><td class="task-summary">【開發】前端 [VT][CP/IB/H5] 支付出金 SRC 2.0</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/28</td></tr>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-27946</span></td><td class="task-summary">【CodeReview】前端 [VT][CP/IB/H5] 支付出金 SRC 2.0</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/28</td></tr>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-29621</span></td><td class="task-summary">【跟測】前端 [VT][CP/IB/H5] 支付出金 SRC 2.0</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/06/16</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PWR-27161 -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-27161</span><span class="parent-name">[MM][ST][PU][UM][VJP] 支付出金 SRC 2.0</span>
+          <div class="parent-meta"><span>五個品牌出金流程接 SRC 2.0（開發中）</span><span>3 個子任務</span><span>進行中</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill inprog" style="width:33%"></div></div><span class="progress-pct">1/3</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-27902</span></td><td class="task-summary">【前端開發】[Web/H5][CP/IB] 支付出金 SRC 2.0</td><td><span class="badge badge-inprogress">⏳ 处理中</span></td><td class="date-cell">2026/05/27</td></tr>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-27903</span></td><td class="task-summary">【CodeReview】[Web/H5][CP/IB] 支付出金 SRC 2.0</td><td><span class="badge badge-pending">⏸ 待处理</span></td><td class="date-cell">2026/05/27</td></tr>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-29626</span></td><td class="task-summary">【前端跟測】[Web/H5][CP/IB] 支付出金 SRC 2.0</td><td><span class="badge badge-pending">⏸ 待处理</span></td><td class="date-cell">2026/06/16</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PWR-30166 -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-30166</span><span class="parent-name">[AU] SRC 2.0 優化</span>
+          <div class="parent-meta"><span>AU 品牌 SRC 2.0 流程優化（測試中）</span><span>2 個子任務</span><span>100% 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">2/2</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-30170</span></td><td class="task-summary">前端開發 [AU] SRC 2.0 優化</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/06/23</td></tr>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-30174</span></td><td class="task-summary">提交測試 [AU] SRC 2.0 優化</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/06/23</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SRC APP訂單號重複 -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-20744</span><span class="parent-name">SRC 出金 — APP 訂單號重複問題</span>
+          <div class="parent-meta"><span>1 個子任務</span><span>Not Pursue</span></div>
+        </div>
+        <div class="parent-stats"><span class="badge badge-notpursue">— Not Pursue</span></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-20914</span></td><td class="task-summary">[跟測][App][FE] SRC出金-APP訂單號重複問題</td><td><span class="badge badge-notpursue">— Not Pursue</span></td><td class="date-cell">2026/02/13</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== SECTION 2 ===================== -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <div class="section-icon" style="background:#ecfdf5;">🌐</div>
+      <div>
+        <div class="section-title">新品牌 / 監管合規接入</div>
+        <div class="section-desc">NS New-S Securities、VF Vantos Market FCA 新品牌支付模塊接入；VT 底層架構升級；後台多品牌展示</div>
+      </div>
+    </div>
+
+    <!-- PWR-21965 NS -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-21965</span><span class="parent-name">[NS][FE][BE] New-S Securities 新品牌監管對接 — 支付模塊</span>
+          <div class="parent-meta"><span>NS 品牌 CP 端支付全模塊開發</span><span>2 個子任務</span><span>1/2 完成（進行中）</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill inprog" style="width:50%"></div></div><span class="progress-pct">1/2</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-26401</span></td><td class="task-summary">[開發][NewS][FE]【CP】News Security 新品牌監管對接 — 支付模塊</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/04</td></tr>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-27182</span></td><td class="task-summary">[跟測][NewS][FE]【CP】News Security 新品牌監管對接 — 支付模塊</td><td><span class="badge badge-inprogress">⏳ 处理中</span></td><td class="date-cell">2026/05/22</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PWR-23378 VF -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-23378</span><span class="parent-name">[VF] Vantos Market FCA 項目 — 支付模塊</span>
+          <div class="parent-meta"><span>VF 品牌 CP 端支付模塊開發</span><span>2 個子任務</span><span>100% 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">2/2</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-26398</span></td><td class="task-summary">[開發][FE]【CP】Vantos Market FCA 項目 - 支付模塊</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/04</td></tr>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-27101</span></td><td class="task-summary">[跟測][FE]【CP】Vantos Market FCA 項目 - 支付模塊</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/20</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PWR-26773 NS+VF 後台 -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-26773</span><span class="parent-name">[NS][VF][FE] New-S Securities + Vantos 新品牌監管後台展示</span>
+          <div class="parent-meta"><span>1 個子任務</span><span>100% 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">1/1</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-26776</span></td><td class="task-summary">[開發][NS][VF][FE] New-S Securities + Vantos 新品牌監管後台展示</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/12</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- VAOR-14976 NS Bug -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">VAOR-14976</span><span class="parent-name">[NS] New-S Security 新品牌監管對接 — Bug 修復</span>
+          <div class="parent-meta"><span>1 個 Bug</span><span>100% 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">1/1</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-漏洞">漏洞</span></td><td><span class="ticket-key vaor">VAOR-18259</span></td><td class="task-summary">【NS】【入金】訂單狀態頁有展示 Need Help 部分，但 NS 沒有 Live Chat support</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/06/25</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- VAOR-14226 VT 底層升級 -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">VAOR-14226</span><span class="parent-name">[VT] 一拖七底層升級</span>
+          <div class="parent-meta"><span>1 個 Bug 修復</span><span>100% 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">1/1</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-漏洞">漏洞</span></td><td><span class="ticket-key vaor">VAOR-17042</span></td><td class="task-summary">【測試環境】【H5-WEB】【多語言】支付頁文案問題</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/04/23</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== SECTION 3 ===================== -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fef3c7;">🥇</div>
+      <div>
+        <div class="section-title">黃金開戶流程 - 支付模塊</div>
+        <div class="section-desc">VT 和 PU 品牌黃金帳戶開戶流程中支付模塊前端開發</div>
+      </div>
+    </div>
+
+    <!-- PWR-20493 VT -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-20493</span><span class="parent-name">[VT][BE][FE] 黃金開戶流程 - 支付（雙端）</span>
+          <div class="parent-meta"><span>VT 黃金帳戶開戶前端雙端開發，含驗收 Bug 修復</span><span>4 個任務</span><span>100% 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">4/4</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-21869</span></td><td class="task-summary">[開發][VT][FE] 黃金開戶流程 - 支付 (雙端)</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/03/04</td></tr>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-21870</span></td><td class="task-summary">[跟測][VT][FE] 黃金開戶流程 - 支付 (雙端)</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/03/04</td></tr>
+          <tr><td><span class="type-tag type-Bug">Bug</span></td><td><span class="ticket-key">PWR-24262</span></td><td class="task-summary">[PCS][FE] 雙端，KYC等級升級個人信息驗證，修改手機號碼，圖形驗證顯示錯誤導致無法驗證</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/04/01</td></tr>
+          <tr><td><span class="type-tag type-Bug">Bug</span></td><td><span class="ticket-key">PWR-24366</span></td><td class="task-summary">[PCS][FE] CP端，個人信息頁面，點擊登出，閃現冗餘提測頁面</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/04/02</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PWR-26320 PU -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-26320</span><span class="parent-name">[PU][BE][FE] 黃金流程跟隨項目</span>
+          <div class="parent-meta"><span>PU 品牌黃金流程跟隨 VT 開發（測試中）</span><span>3 個子任務</span><span>2/3 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill inprog" style="width:67%"></div></div><span class="progress-pct">2/3</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-29500</span></td><td class="task-summary">前端 黃金流程前置作業 文件整理 [ALL][Web:CP]</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/06/15</td></tr>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-28402</span></td><td class="task-summary">前端開發 [PU][Web:CP/IB] 黃金流程跟隨項目</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/06/03</td></tr>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-29298</span></td><td class="task-summary">前端跟測 [PU][Web:CP/IB] 黃金流程跟隨項目</td><td><span class="badge badge-inprogress">⏳ 处理中</span></td><td class="date-cell">2026/06/11</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== SECTION 4 ===================== -->
+  <div class="section" id="s4">
+    <div class="section-header">
+      <div class="section-icon" style="background:#dcfce7;">🔗</div>
+      <div>
+        <div class="section-title">LBT 合單延伸（PU / VJP / ST）</div>
+        <div class="section-desc">延續 2025 下半年 LBT 合單項目，完成 PU、VJP、ST 三個品牌的跟測及線上 Bug 修正</div>
+      </div>
+    </div>
+
+    <!-- PWR-16471 PU -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-16471 / PWR-16472 / PWR-16473</span><span class="parent-name">[PU / VJP / ST][Web][APP][CP] LBT 第二優先級合單</span>
+          <div class="parent-meta"><span>三個品牌 LBT 合單跟測及線上修正</span><span>4 個子任務</span><span>100% 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">4/4</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-18311</span></td><td class="task-summary">[跟測][PU][Web][APP] LBT第二優先級合單</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/01/14</td></tr>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-18316</span></td><td class="task-summary">[跟測][VJP][Web][APP] LBT第二優先級合單</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/01/14</td></tr>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-18317</span></td><td class="task-summary">[跟測][ST][Web][APP] LBT第二優先級合單</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/01/14</td></tr>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-19944</span></td><td class="task-summary">[跟測][AU][VT][PU][UM][MO][Web][APP] LBT第二優先級合單，線上 Bug 修正</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/02/03</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== SECTION 5 ===================== -->
+  <div class="section" id="s5">
+    <div class="section-header">
+      <div class="section-icon" style="background:#ede9fe;">⚙️</div>
+      <div>
+        <div class="section-title">出金功能優化 / 配置</div>
+        <div class="section-desc">出金手續費配置統一化、Google 身份驗證流程替換、KYC 雙端統一、UM 新帳戶類型支援</div>
+      </div>
+    </div>
+
+    <!-- PWR-26675 手續費 -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-26675</span><span class="parent-name">[支付中台][支付雙端][前端] 出金手續費配置統一化</span>
+          <div class="parent-meta"><span>1 個子任務</span><span>100% 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">1/1</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-27851</span></td><td class="task-summary">提交測試 [支付中台][支付雙端][前端] 出金手續費配置統一化</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/27</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PWR-24815 Google流程 -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-24815</span><span class="parent-name">[支付][FE]【用戶安全】業務流程中 Google 流程替換 - 補枚舉</span>
+          <div class="parent-meta"><span>2 個任務</span><span>100% 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">2/2</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-24820</span></td><td class="task-summary">[開發][支付][FE]【用戶安全】業務流程中 Google 流程替換 - 補枚舉</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/04/09</td></tr>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-26385</span></td><td class="task-summary">[跟測][支付][FE]【用戶安全】業務流程中 Google 流程替換 - 補枚舉</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/04</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PWR-20919 KYC -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-20919</span><span class="parent-name">[VTJ][PU][ST][UM][MM][VT][Web][CP/IB] 雙端統一二期 - KYC</span>
+          <div class="parent-meta"><span>1 個子任務</span><span>100% 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">1/1</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-23996</span></td><td class="task-summary">「跟測」[VTJ][PU][ST][UM][MM][VT][Web][CP/IB][支付] 雙端統一二期-KYC</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/03/29</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PWR-15354 UM 新帳戶類型 -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-15354</span><span class="parent-name">[UM][BE] UM 新增帳戶類型 - 支付內轉邏輯處理</span>
+          <div class="parent-meta"><span>2 個子任務</span><span>100% 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">2/2</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-21706</span></td><td class="task-summary">[開發][UM][FE][Web][H5] UM新增帳戶類型 - 支付內轉邏輯處理</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/03/03</td></tr>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-21707</span></td><td class="task-summary">[跟測][UM][FE][Web][H5] UM新增帳戶類型 - 支付內轉邏輯處理</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/03/03</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PWR-26964 UM LBT/IBT 文案 -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-26964</span><span class="parent-name">[UM] LBT 和 IBT 渠道文案調整</span>
+          <div class="parent-meta"><span>1 個子任務（Code Review）</span><span>100% 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">1/1</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-27950</span></td><td class="task-summary">代碼 Review [UM] LBT 和 IBT 渠道文案調整</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/28</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== SECTION 6 ===================== -->
+  <div class="section" id="s6">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fee2e2;">🔧</div>
+      <div>
+        <div class="section-title">轉帳 / 入金問題修復</div>
+        <div class="section-desc">CC/LBT 入金觸發內轉攔截、IB Portal 轉帳上傳、入金金額精度問題等修復</div>
+      </div>
+    </div>
+
+    <!-- PWR-19900 CC/LBT內轉 -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-19900</span><span class="parent-name">[AU][FE] 用戶使用 CC/LBT 入金發起內轉存在前端攔截問題修復</span>
+          <div class="parent-meta"><span>2 個子任務</span><span>100% 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">2/2</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-20468</span></td><td class="task-summary">[AU][FE] 用戶使用CC/LBT入金發起內轉存在前端攔截問題修復</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/02/09</td></tr>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-21557</span></td><td class="task-summary">[跟測][AU][FE] 用戶使用CC/LBT入金發起內轉存在前端攔截問題修復</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/03/02</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PWR-21617 IB Portal -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-21617</span><span class="parent-name">IB Portal 向其他帳戶轉帳上傳文件報錯</span>
+          <div class="parent-meta"><span>3 個任務（含 Not Pursue）</span><span>2/3 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:67%"></div></div><span class="progress-pct">2/3</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-21654</span></td><td class="task-summary">[開發] IB portal 向其他帳戶轉帳上傳文件報錯</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/03/03</td></tr>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-21655</span></td><td class="task-summary">[跟測] IB portal 向其他帳戶轉帳上傳文件報錯</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/03/03</td></tr>
+          <tr><td><span class="type-tag type-Bug">Bug</span></td><td><span class="ticket-key">PWR-22486</span></td><td class="task-summary">【FE】【IB】【VJP】轉帳給其他，上傳文件後 upload-sub-accounts 接口 headers 缺少 x-source</td><td><span class="badge badge-notpursue">— Not Pursue</span></td><td class="date-cell">2026/03/11</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PWR-20802 小數精度 -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-20802</span><span class="parent-name">[AU][FE] 提交入金訂單金額含小數，CRM 入金審核金額和 CP 端小數精度不一致</span>
+          <div class="parent-meta"><span>1 個開發子任務</span><span>100% 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">1/1</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-20928</span></td><td class="task-summary">[開發][AU][FE][H5] 提交出金金額含小數，精度問題修復</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/02/13</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PWR-28441 轉帳送出禁止操作 -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-28441</span><span class="parent-name">[FE][H5][AU] 轉帳點擊送出後加上禁止操作邏輯</span>
+          <div class="parent-meta"><span>1 個 Code Review 子任務</span><span>待處理</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill inprog" style="width:0%"></div></div><span class="progress-pct">0/1</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-28447</span></td><td class="task-summary">代碼 Review [H5] 轉帳點擊送出後加上禁止操作邏輯</td><td><span class="badge badge-pending">⏸ 待处理</span></td><td class="date-cell">2026/06/03</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Standalone 轉帳 Bug -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-24857</span><span class="parent-name">[Prod][Transfer] 跟單帳號無法提交內轉 — 線上緊急修復</span>
+          <div class="parent-meta"><span>獨立任務，線上緊急處理</span><span>1 個任務</span><span>100% 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">1/1</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-任務">任務</span></td><td><span class="ticket-key">PWR-24857</span></td><td class="task-summary">[Prod][transfer] 跟單帳號無法提交內轉</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/04/10</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== SECTION 7 ===================== -->
+  <div class="section" id="s7">
+    <div class="section-header">
+      <div class="section-icon" style="background:#ecfdf5;">📈</div>
+      <div>
+        <div class="section-title">Social Trading / IBT 支援</div>
+        <div class="section-desc">Social Trading Performance Fee API 額外校驗；IBT 遷移需求 Code Review；UM IBT/LBT 渠道文案；isJumpSumsub API 調整</div>
+      </div>
+    </div>
+
+    <!-- PWR-21636 Social Trading -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-21636</span><span class="parent-name">[ST][UM][VT][FE] Social Trading Performance Fee API - Additional Checking</span>
+          <div class="parent-meta"><span>2 個子任務</span><span>100% 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">2/2</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-22798</span></td><td class="task-summary">[開發][ST][FE] Social Trading Performance Fee API - Additional Checking</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/03/15</td></tr>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-24492</span></td><td class="task-summary">[跟測][ST][FE] Social Trading Performance Fee API - Additional Checking</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/04/07</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PWR-24374 IBT -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-24374</span><span class="parent-name">[UM][ST][PU][MM] IBT 遷移需求</span>
+          <div class="parent-meta"><span>1 個 Code Review（待處理）</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill inprog" style="width:0%"></div></div><span class="progress-pct">0/1</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-27311</span></td><td class="task-summary">代碼 Review [UM][SVG] IBT 遷移需求</td><td><span class="badge badge-pending">⏸ 待处理</span></td><td class="date-cell">2026/05/25</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Sentry 技術優化 -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-27958</span><span class="parent-name">[H5] funds-au Sentry 埋點上報環境修改</span>
+          <div class="parent-meta"><span>1 個 Code Review</span><span>100% 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">1/1</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-子任務">子任務</span></td><td><span class="ticket-key">PWR-27964</span></td><td class="task-summary">代碼 Review [H5] funds-au Sentry 埋點上報環境修改</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/28</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PWR-25917 isJumpSumsub API -->
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">PWR-25917</span><span class="parent-name">[VTJ][PU][ST][UM][MM][VT][APP][H5] 調整 isJumpSumsub API 數據結構及判斷邏輯</span>
+          <div class="parent-meta"><span>獨立故事</span><span>100% 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">✓</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-故事">故事</span></td><td><span class="ticket-key">PWR-25917</span></td><td class="task-summary">[VTJ][PU][ST][UM][MM][VT][APP][H5] 調整 isJumpSumsub API 數據結構以及判斷邏輯</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/04/24</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== SECTION 8 ===================== -->
+  <div class="section" id="s8">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fef3c7;">🎨</div>
+      <div>
+        <div class="section-title">VF 品牌 UI Bug 集中修復</div>
+        <div class="section-desc">Vantos Market FCA (VF) 品牌 H5 / Web 端支付頁、交易歷史、入出金頁面 UI 走查後 12 個 Bug 全數修復</div>
+      </div>
+    </div>
+
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">VF 品牌獨立漏洞</span><span class="parent-name">VF H5 / Web 支付 UI 全面走查修復</span>
+          <div class="parent-meta"><span>VAOR 系列</span><span>12 個漏洞</span><span>100% 完成</span></div>
+        </div>
+        <div class="parent-stats"><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><span class="progress-pct">12/12</span></div></div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-漏洞">漏洞</span></td><td><span class="ticket-key vaor">VAOR-17581</span></td><td class="task-summary">【VF】【支付-H5】【交易歷史】歷史訂單展示有問題</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/18</td></tr>
+          <tr><td><span class="type-tag type-漏洞">漏洞</span></td><td><span class="ticket-key vaor">VAOR-17665</span></td><td class="task-summary">【VF】【入金】【Web/H5】入金拒絕，成功的圖標顯示與 Figma 不一致</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/20</td></tr>
+          <tr><td><span class="type-tag type-漏洞">漏洞</span></td><td><span class="ticket-key vaor">VAOR-17668</span></td><td class="task-summary">【VF】【交易歷史】【Web/H5】底部切換頁面欄位與 Figma 不一致</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/20</td></tr>
+          <tr><td><span class="type-tag type-漏洞">漏洞</span></td><td><span class="ticket-key vaor">VAOR-17670</span></td><td class="task-summary">【VF】【交易歷史】【Web/H5】篩選時間功能不生效</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/20</td></tr>
+          <tr><td><span class="type-tag type-漏洞">漏洞</span></td><td><span class="ticket-key vaor">VAOR-17672</span></td><td class="task-summary">【VF】【交易歷史】【H5】狀態欄位左邊應預留空間</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/20</td></tr>
+          <tr><td><span class="type-tag type-漏洞">漏洞</span></td><td><span class="ticket-key vaor">VAOR-17673</span></td><td class="task-summary">【VF】【入金/出金】【H5】入金/出金按鍵的帳戶應與欄位長度一致</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/20</td></tr>
+          <tr><td><span class="type-tag type-漏洞">漏洞</span></td><td><span class="ticket-key vaor">VAOR-17685</span></td><td class="task-summary">【VF】【交易歷史】【H5】沒有顯示切換分頁的按鍵造成無法切換分頁</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/21</td></tr>
+          <tr><td><span class="type-tag type-漏洞">漏洞</span></td><td><span class="ticket-key vaor">VAOR-17701</span></td><td class="task-summary">【VF】【入金】【Web/H5】沒有交易帳號的情況下，沒顯示需完成開戶的橫幅</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/21</td></tr>
+          <tr><td><span class="type-tag type-漏洞">漏洞</span></td><td><span class="ticket-key vaor">VAOR-17708</span></td><td class="task-summary">【VF】【入金】【H5】繼續按鈕沒有居中</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/21</td></tr>
+          <tr><td><span class="type-tag type-漏洞">漏洞</span></td><td><span class="ticket-key vaor">VAOR-17723</span></td><td class="task-summary">【VF】【入金/出金】【H5】多出後退按鍵與設計稿不一致</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/22</td></tr>
+          <tr><td><span class="type-tag type-漏洞">漏洞</span></td><td><span class="ticket-key vaor">VAOR-17767</span></td><td class="task-summary">【VF】【出金】【H5】出金詳情頁的立刻提款按鈕沒有居中</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/25</td></tr>
+          <tr><td><span class="type-tag type-漏洞">漏洞</span></td><td><span class="ticket-key vaor">VAOR-17780</span></td><td class="task-summary">【VF】【出金】【H5】出金詳情頁報錯時，顯示兩次報錯</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/25</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== SECTION 9 ===================== -->
+  <div class="section" id="s9">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fee2e2;">🚨</div>
+      <div>
+        <div class="section-title">Production Issues / 獨立線上修復</div>
+        <div class="section-desc">線上客戶反饋緊急處理、PIR 事件響應、獨立 Bug 修復，快速止血保障服務穩定</div>
+      </div>
+    </div>
+
+    <div class="parent-card">
+      <div class="parent-head">
+        <div class="parent-info">
+          <span class="parent-key">Production Issues &amp; Standalone Bugs</span><span class="parent-name">線上事件響應 &amp; 獨立問題修復</span>
+          <div class="parent-meta"><span>4 個 PIR / SAR / ASR + 5 個獨立漏洞</span><span>大部分已完成</span></div>
+        </div>
+      </div>
+      <table class="tasks-table">
+        <thead><tr><th>類型</th><th>工單號</th><th>任務說明</th><th>狀態</th><th>日期</th></tr></thead>
+        <tbody>
+          <tr><td><span class="type-tag type-漏洞">漏洞</span></td><td><span class="ticket-key">PWR-17409</span></td><td class="task-summary">[APP][ALL][入金] 沒有上傳文檔時點擊提交，畫面沒有移動到指定位置</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/01/05</td></tr>
+          <tr><td><span class="type-tag type-Prod">Production</span></td><td><span class="ticket-key pir">PIR-9783</span></td><td class="task-summary">[AU][BE] IB 反饋無法出金，點選 USDT 後是空白的（客戶量：1, P2）</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/01/05</td></tr>
+          <tr><td><span class="type-tag type-漏洞">漏洞</span></td><td><span class="ticket-key sar">SAR-834</span></td><td class="task-summary">出金調起核身組件報錯且報錯文案不正確</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/01/26</td></tr>
+          <tr><td><span class="type-tag type-Prod">Production</span></td><td><span class="ticket-key pir">PIR-12835</span></td><td class="task-summary">[VT][BE] 客戶出金正餘額帳戶出金，但顯示其他帳戶負餘額導致無法出金（客戶量：2, P2）</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/11</td></tr>
+          <tr><td><span class="type-tag type-Prod">Production</span></td><td><span class="ticket-key pir">PIR-12948</span></td><td class="task-summary">[VT][BE] 阿拉伯語模式下 IB 出金，螢幕和電話不匹配（客戶量：1, P2）</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/05/15</td></tr>
+          <tr><td><span class="type-tag type-漏洞">漏洞</span></td><td><span class="ticket-key sar">ASR-5122</span></td><td class="task-summary">【CP端，出金接口無響應】</td><td><span class="badge badge-done">✓ 完成</span></td><td class="date-cell">2026/04/14</td></tr>
+          <tr><td><span class="type-tag type-漏洞">漏洞</span></td><td><span class="ticket-key">PWR-29650</span></td><td class="task-summary">已設置 LV2 才可出金之渠道在 LV1 時就可出金（需確認）</td><td><span class="badge badge-readytest">◎ Ready for test</span></td><td class="date-cell">2026/06/16</td></tr>
+          <tr><td><span class="type-tag type-Prod">Production</span></td><td><span class="ticket-key pir">PIR-10091</span></td><td class="task-summary">[AU][BE] IB portal 無法出金，顯示不能使用含超過兩位小數的數字（P1）</td><td><span class="badge badge-notpursue">— Not Pursue</span></td><td class="date-cell">2026/01/16</td></tr>
+          <tr><td><span class="type-tag type-Bug">Bug</span></td><td><span class="ticket-key">PWR-15556</span></td><td class="task-summary">[APP][IB] 新流程出金歷史記錄無法查看拒絕原因（PWR-21040）</td><td><span class="badge badge-notpursue">— Not Pursue</span></td><td class="date-cell">2026/02/23</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  本文件由工單資料自動整理生成 · 2026 上半年績效自評支持文件 · Hytech BIT Frontend
+</footer>
+</body>
+</html>
